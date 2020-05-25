@@ -1,0 +1,19 @@
+{
+    "name": "crows-feet/laravel-request-logger",
+    "description": "Laravel request and response logger",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Crow's feet",
+            "email": "s103nup@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "CrowsFeet\\RequestLogger\\": "packages/CrowsFeet/RequestLogger/src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {}
+}
