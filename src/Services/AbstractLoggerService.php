@@ -2,7 +2,7 @@
 namespace CrowsFeet\HttpLogger\Services;
 
 use Carbon\Carbon;
-use App\Services\Drivers\LoggerDriverInterface;
+use CrowsFeet\HttpLogger\Drivers\LoggerDriverInterface;
 
 
 abstract class AbstractLoggerService
@@ -13,6 +13,13 @@ abstract class AbstractLoggerService
      * @var LoggerDriver
      */
     protected $driver;
+
+    /**
+     * Request ID
+     *
+     * @var string
+     */
+    protected $rqId = '';
 
     public function __construct(LoggerDriverInterface $driver)
     {
@@ -27,9 +34,11 @@ abstract class AbstractLoggerService
      */
     protected function getContent($source)
     {
+        $this->generateRqid();
+
         return [
             'MID' => $this->getMerchantId($source),
-            'RqID' => $this->generateRqId(),
+            'RqID' => $this->getRqid(),
             'LevelID' => $this->getLevelId(),
             'Type' => $this->getProjectName(),
             'Tag' => $this->getTag(),
@@ -49,21 +58,41 @@ abstract class AbstractLoggerService
     abstract protected function getMerchantId($source);
 
     /**
-     * 產生 RqId
+     * 產生 Guid
      *
      * @return string
      */
-    protected function generateRqId()
+    protected function generateGuid()
     {
         mt_srand((double)microtime() * 10000); //optional for php 4.2.0 and up.
         $charid = strtoupper(md5(uniqid(rand(), true)));
         $uuid = substr($charid, 0, 8)
             .substr($charid, 8, 4)
-            .substr($charid,12, 4)
-            .substr($charid,16, 4)
-            .substr($charid,20,12);
+            .substr($charid, 12, 4)
+            .substr($charid, 16, 4)
+            .substr($charid, 20, 12);
 
         return $uuid;
+    }
+
+    /**
+     * 產生 Rqid
+     *
+     * @return void
+     */
+    protected function generateRqid()
+    {
+        $this->rqId = $this->generateGuid();
+    }
+
+    /**
+     * 取得 Rqid
+     *
+     * @return string
+     */
+    public function getRqid()
+    {
+        return $this->rqId;
     }
 
     /**

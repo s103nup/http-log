@@ -24,7 +24,6 @@ class Http extends AbstractLoggerDriver
             'Content-Type' => 'application/json',
             'Authorization' => 'Bearer ' . $token,
         ];
-        dump($content); // test
         $body = $this->getBody($content);
         $request = new Request($method, $uri, $headers, $body);
         $options = ['timeout' => 2];

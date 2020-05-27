@@ -35,7 +35,7 @@ class HttpLoggerServiceProvider extends ServiceProvider
     public function register()
     {
         $driver = config('http_logger.default');
-        $container = 'CrowsFeet\HttpLogger\Services\\' . $driver;
+        $container = 'CrowsFeet\HttpLogger\Drivers\\' . $driver;
         $this->app->singleton(RequestLoggerService::class, function ($app) use ($container) {
             $driver = app($container);
 
