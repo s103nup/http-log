@@ -1,5 +1,5 @@
 {
-    "name": "crows-feet/laravel-request-logger",
+    "name": "crows-feet/laravel-http-logger",
     "description": "Laravel request and response logger",
     "type": "library",
     "license": "MIT",
