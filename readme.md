@@ -21,7 +21,7 @@ protected $middlewareGroups = [
     // ...
     'api' => [
         // ...
-        \CrowsFeet\HttpLogger\Middleware\HttpLogger:class,
+        \CrowsFeet\HttpLogger\Middleware\HttpLogger::class,
     ],
 ];
 ```

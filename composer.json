@@ -11,9 +11,16 @@
     ],
     "autoload": {
         "psr-4": {
-            "CrowsFeet\\RequestLogger\\": "packages/CrowsFeet/RequestLogger/src/"
+            "CrowsFeet\\HttpLogger\\": "src/"
         }
     },
     "minimum-stability": "beta",
-    "require": {}
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CrowsFeet\\HttpLogger\\Providers\\HttpLoggerServiceProvider"
+            ]
+        }
+    }
 }
