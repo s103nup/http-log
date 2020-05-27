@@ -14,6 +14,6 @@
             "CrowsFeet\\RequestLogger\\": "packages/CrowsFeet/RequestLogger/src/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "beta",
     "require": {}
 }
