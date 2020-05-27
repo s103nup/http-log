@@ -24,7 +24,7 @@ class HttpLoggerServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__ . '/../../config/http_logger.php' => config_path('http_logger.php'),
-        ]);
+        ], 'http-logger-config');
     }
 
     /**
