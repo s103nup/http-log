@@ -51,7 +51,7 @@ class HttpLoggerServiceProvider extends ServiceProvider
      */
     private function getDriver()
     {
-        $driverName = ucfirst(config('http_logger.default'));
+        $driverName = ucfirst(config('http_logger.default', 'Http'));
         $container = 'CrowsFeet\HttpLogger\Drivers\\' . $driverName;
 
         return app($container);
