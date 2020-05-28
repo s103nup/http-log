@@ -15,7 +15,10 @@
         }
     },
     "minimum-stability": "beta",
-    "require": {},
+    "require": {
+        "php": "^7.2.5",
+        "guzzlehttp/guzzle": "^6.3"
+    },
     "extra": {
         "laravel": {
             "providers": [
