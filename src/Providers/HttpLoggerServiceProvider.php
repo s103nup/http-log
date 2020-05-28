@@ -34,18 +34,26 @@ class HttpLoggerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $driver = config('http_logger.default');
-        $container = 'CrowsFeet\HttpLogger\Drivers\\' . $driver;
-        $this->app->singleton(RequestLoggerService::class, function ($app) use ($container) {
-            $driver = app($container);
-
+        $driver = $this->getDriver();
+        $this->app->singleton(RequestLoggerService::class, function ($app) use ($driver) {
             return new RequestLoggerService($driver);
         });
 
-        $this->app->singleton(JsonResponseLoggerService::class, function ($app) use ($container) {
-            $driver = app($container);
-
+        $this->app->singleton(JsonResponseLoggerService::class, function ($app) use ($driver) {
             return new JsonResponseLoggerService($driver);
         });
+    }
+
+    /**
+     * Get driver
+     *
+     * @return mixed
+     */
+    private function getDriver()
+    {
+        $driverName = ucfirst(config('http_logger.default'));
+        $container = 'CrowsFeet\HttpLogger\Drivers\\' . $driverName;
+
+        return app($container);
     }
 }
