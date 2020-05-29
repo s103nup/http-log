@@ -34,7 +34,7 @@ class Http extends AbstractLoggerDriver
     /**
      * 是否成功記錄 Log
      *
-     * @param  boolean $return
+     * @param  mixed $return
      * @return boolean
      */
     public function isSuccess($return)

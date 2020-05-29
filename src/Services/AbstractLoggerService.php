@@ -25,6 +25,42 @@ abstract class AbstractLoggerService
     {
         $this->driver = $driver;
     }
+
+    /**
+     * 記錄 Log
+     *
+     * @param  mixed   $source
+     * @param  string  $rqId
+     * @return boolean
+     */
+    public function log($source, $rqId = '')
+    {
+        $this->setRqid($rqId);
+
+        $content = $this->getContent($source);
+
+        return $this->driver->log($content);
+    }
+
+    /**
+     * 產生 Rqid
+     *
+     * @return void
+     */
+    public function generateRqid()
+    {
+        return $this->generateGuid();
+    }
+
+    /**
+     * 取得 Rqid
+     *
+     * @return string
+     */
+    public function getRqid()
+    {
+        return $this->rqId;
+    }
     
     /**
      * 取得 Log 內容
@@ -34,8 +70,6 @@ abstract class AbstractLoggerService
      */
     protected function getContent($source)
     {
-        $this->generateRqid();
-
         return [
             'MID' => $this->getMerchantId($source),
             'RqID' => $this->getRqid(),
@@ -48,14 +82,6 @@ abstract class AbstractLoggerService
             'ProcessDate' => $this->getProcessDate(),
         ];
     }
-
-    /**
-     * 取得 Merchant ID
-     *
-     * @param  mixed  $source
-     * @return string
-     */
-    abstract protected function getMerchantId($source);
 
     /**
      * 產生 Guid
@@ -76,23 +102,48 @@ abstract class AbstractLoggerService
     }
 
     /**
-     * 產生 Rqid
+     * 設定 Rqid
      *
+     * @param  string $rqId
      * @return void
      */
-    protected function generateRqid()
+    protected function setRqid($rqId)
     {
-        $this->rqId = $this->generateGuid();
+        if ($rqId === '') {
+            $rqId = $this->generateGuid();
+        }
+
+        $this->rqId = $rqId;
     }
 
     /**
-     * 取得 Rqid
+     * 取得 Log 使用者 IP
      *
      * @return string
      */
-    public function getRqid()
+    protected function getUserIp()
     {
-        return $this->rqId;
+        return request()->ip();
+    }
+
+    /**
+     * 取得 Log 使用者 Agent
+     *
+     * @return string
+     */
+    protected function getUserAgent()
+    {
+        return request()->userAgent();
+    }
+
+    /**
+     * 取得 Log 處理時間
+     *
+     * @return int
+     */
+    protected function getProcessDate()
+    {
+        return Carbon::now()->timestamp;
     }
 
     /**
@@ -126,6 +177,15 @@ abstract class AbstractLoggerService
         return $this->getConfig('project_name');
     }
 
+
+    /**
+     * 取得 Merchant ID
+     *
+     * @param  mixed  $source
+     * @return string
+     */
+    abstract protected function getMerchantId($source);
+
     /**
      * 取得 Log 自定義標籤
      */
@@ -138,47 +198,4 @@ abstract class AbstractLoggerService
      * @return string
      */
     abstract protected function getLogData($source);
-
-    /**
-     * 取得 Log 使用者 IP
-     *
-     * @return string
-     */
-    protected function getUserIp()
-    {
-        return request()->ip();
-    }
-
-    /**
-     * 取得 Log 使用者 Agent
-     *
-     * @return string
-     */
-    protected function getUserAgent()
-    {
-        return request()->userAgent();
-    }
-
-    /**
-     * 取得 Log 處理時間
-     *
-     * @return int
-     */
-    protected function getProcessDate()
-    {
-        return Carbon::now()->timestamp;
-    }
-
-    /**
-     * 記錄 Log
-     *
-     * @param  mixed $source
-     * @return boolean
-     */
-    public function log($source)
-    {
-        $content = $this->getContent($source);
-
-        return $this->driver->log($content);
-    }
 }

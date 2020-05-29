@@ -4,11 +4,33 @@ namespace CrowsFeet\HttpLogger\Middleware;
 	
 use Closure;
 use Illuminate\Support\Facades\Log;
-use CrowsFeet\HttpLogger\Services\RequestLoggerService;
-use CrowsFeet\HttpLogger\Services\JsonResponseLoggerService;
+use CrowsFeet\HttpLogger\Services\RequestLoggerService as RequestLogger;
+use CrowsFeet\HttpLogger\Services\JsonResponseLoggerService as ResponseLogger;
 
 class HttpLogger
 {
+    /**
+     * Request Logger
+     *
+     * @var RequestLoggerService
+     */
+    protected $requestLogger;
+
+    /**
+     * Response Logger
+     *
+     * @var ResponseLoggerService
+     */
+    protected $responseLogger;
+
+    public function __construct(
+        RequestLogger $requestLogger,
+        ResponseLogger $responseLogger
+    ) {
+        $this->requestLogger = $requestLogger;
+        $this->responseLogger = $responseLogger;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -18,14 +40,13 @@ class HttpLogger
      */
     public function handle($request, Closure $next)
     {
-        $requestLogger = app(RequestLoggerService::class);
-        $requestLogger->log($request);
-        Log::info('Request RqId: ' . $requestLogger->getRqid());
+        $this->requestLogger->log($request);
+        $rqid = $this->requestLogger->getRqid();
+        Log::info('Request RqId: ' . $rqid);
 
-        $responseLogger = app(JsonResponseLoggerService::class);
         $response = $next($request);
-        $responseLogger->log($response);
-        Log::info('Response RqId: ' . $responseLogger->getRqid());
+        $this->responseLogger->log($response, $rqid);
+        Log::info('Response RqId: ' . $rqid);
 
         return $response;
     }
