@@ -3,18 +3,17 @@ namespace CrowsFeet\HttpLogger\Drivers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
-use Illuminate\Http\Response;
 use CrowsFeet\HttpLogger\Drivers\AbstractLoggerDriver;
 
 class Http extends AbstractLoggerDriver
 {
     /**
-     * 記錄 Log 方式
+     * 記錄 Log
      *
-     * @param  mixed  $content
-     * @return mixed
+     * @param  mixed $content
+     * @return void
      */
-    public function handle($content)
+    public function log($content)
     {
         $client = new Client;
         $method = 'POST';
@@ -30,18 +29,7 @@ class Http extends AbstractLoggerDriver
 
         return $client->send($request, $options);
     }
-
-    /**
-     * 是否成功記錄 Log
-     *
-     * @param  mixed $return
-     * @return boolean
-     */
-    public function isSuccess($return)
-    {
-        return ($return->getStatusCode() === Response::HTTP_CREATED);
-    }
-
+    
     /**
      * 取得驅動名稱
      *

@@ -2,29 +2,18 @@
 namespace CrowsFeet\HttpLogger\Services;
 
 use Carbon\Carbon;
-use CrowsFeet\HttpLogger\Drivers\LoggerDriverInterface;
+use Illuminate\Support\Str;
+use CrowsFeet\HttpLogger\Jobs\AsyncLogProcessor;
 
 
 abstract class AbstractLoggerService
 {
-    /**
-     * Log 驅動
-     *
-     * @var LoggerDriver
-     */
-    protected $driver;
-
     /**
      * Request ID
      *
      * @var string
      */
     protected $rqId = '';
-
-    public function __construct(LoggerDriverInterface $driver)
-    {
-        $this->driver = $driver;
-    }
 
     /**
      * 記錄 Log
@@ -36,10 +25,7 @@ abstract class AbstractLoggerService
     public function log($source, $rqId = '')
     {
         $this->setRqid($rqId);
-
-        $content = $this->getContent($source);
-
-        return $this->driver->log($content);
+        $this->dispatch($this->getContent($source));
     }
 
     /**
@@ -49,7 +35,7 @@ abstract class AbstractLoggerService
      */
     public function generateRqid()
     {
-        return $this->generateGuid();
+        return (string) Str::uuid();
     }
 
     /**
@@ -66,7 +52,7 @@ abstract class AbstractLoggerService
      * 取得 Log 內容
      *
      * @param  mixed  $source
-     * @return string
+     * @return array
      */
     protected function getContent($source)
     {
@@ -84,24 +70,6 @@ abstract class AbstractLoggerService
     }
 
     /**
-     * 產生 Guid
-     *
-     * @return string
-     */
-    protected function generateGuid()
-    {
-        mt_srand((double)microtime() * 10000); //optional for php 4.2.0 and up.
-        $charid = strtoupper(md5(uniqid(rand(), true)));
-        $uuid = substr($charid, 0, 8)
-            .substr($charid, 8, 4)
-            .substr($charid, 12, 4)
-            .substr($charid, 16, 4)
-            .substr($charid, 20, 12);
-
-        return $uuid;
-    }
-
-    /**
      * 設定 Rqid
      *
      * @param  string $rqId
@@ -110,7 +78,7 @@ abstract class AbstractLoggerService
     protected function setRqid($rqId)
     {
         if ($rqId === '') {
-            $rqId = $this->generateGuid();
+            $rqId = $this->generateRqid();
         }
 
         $this->rqId = $rqId;
@@ -177,14 +145,16 @@ abstract class AbstractLoggerService
         return $this->getConfig('project_name');
     }
 
-
     /**
-     * 取得 Merchant ID
+     * 發送 Log
      *
-     * @param  mixed  $source
-     * @return string
+     * @param  array $content
+     * @return void
      */
-    abstract protected function getMerchantId($source);
+    protected function dispatch($content)
+    {
+        AsyncLogProcessor::dispatch($content);
+    }
 
     /**
      * 取得 Log 自定義標籤
@@ -198,4 +168,12 @@ abstract class AbstractLoggerService
      * @return string
      */
     abstract protected function getLogData($source);
+
+    /**
+     * 取得 Merchant ID
+     *
+     * @param  mixed  $source
+     * @return string
+     */
+    abstract public function getMerchantId($source);
 }
