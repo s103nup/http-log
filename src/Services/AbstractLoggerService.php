@@ -2,18 +2,12 @@
 namespace CrowsFeet\HttpLogger\Services;
 
 use Carbon\Carbon;
-use CrowsFeet\HttpLogger\Drivers\LoggerDriverInterface;
+use Illuminate\Support\Str;
+use CrowsFeet\HttpLogger\Jobs\AsyncLogProcessor;
 
 
 abstract class AbstractLoggerService
 {
-    /**
-     * Log 驅動
-     *
-     * @var LoggerDriver
-     */
-    protected $driver;
-
     /**
      * Request ID
      *
@@ -21,21 +15,47 @@ abstract class AbstractLoggerService
      */
     protected $rqId = '';
 
-    public function __construct(LoggerDriverInterface $driver)
+    /**
+     * 記錄 Log
+     *
+     * @param  mixed   $source
+     * @param  string  $rqId
+     * @return boolean
+     */
+    public function log($source, $rqId = '')
     {
-        $this->driver = $driver;
+        $this->setRqid($rqId);
+        $this->dispatch($this->getContent($source));
+    }
+
+    /**
+     * 產生 Rqid
+     *
+     * @return void
+     */
+    public function generateRqid()
+    {
+        return (string) Str::uuid();
+    }
+
+    /**
+     * 取得 Rqid
+     *
+     * @return string
+     */
+    public function getRqid()
+    {
+        return $this->rqId;
     }
     
     /**
      * 取得 Log 內容
      *
      * @param  mixed  $source
-     * @return string
+     * @return array
      */
     protected function getContent($source)
     {
-        $this->generateRqid();
-
         return [
             'MID' => $this->getMerchantId($source),
             'RqID' => $this->getRqid(),
@@ -50,49 +70,48 @@ abstract class AbstractLoggerService
     }
 
     /**
-     * 取得 Merchant ID
+     * 設定 Rqid
      *
-     * @param  mixed  $source
-     * @return string
-     */
-    abstract protected function getMerchantId($source);
-
-    /**
-     * 產生 Guid
-     *
-     * @return string
-     */
-    protected function generateGuid()
-    {
-        mt_srand((double)microtime() * 10000); //optional for php 4.2.0 and up.
-        $charid = strtoupper(md5(uniqid(rand(), true)));
-        $uuid = substr($charid, 0, 8)
-            .substr($charid, 8, 4)
-            .substr($charid, 12, 4)
-            .substr($charid, 16, 4)
-            .substr($charid, 20, 12);
-
-        return $uuid;
-    }
-
-    /**
-     * 產生 Rqid
-     *
+     * @param  string $rqId
      * @return void
      */
-    protected function generateRqid()
+    protected function setRqid($rqId)
     {
-        $this->rqId = $this->generateGuid();
+        if ($rqId === '') {
+            $rqId = $this->generateRqid();
+        }
+
+        $this->rqId = $rqId;
     }
 
     /**
-     * 取得 Rqid
+     * 取得 Log 使用者 IP
      *
      * @return string
      */
-    public function getRqid()
+    protected function getUserIp()
     {
-        return $this->rqId;
+        return request()->ip();
+    }
+
+    /**
+     * 取得 Log 使用者 Agent
+     *
+     * @return string
+     */
+    protected function getUserAgent()
+    {
+        return request()->userAgent();
+    }
+
+    /**
+     * 取得 Log 處理時間
+     *
+     * @return int
+     */
+    protected function getProcessDate()
+    {
+        return Carbon::now()->timestamp;
     }
 
     /**
@@ -127,6 +146,17 @@ abstract class AbstractLoggerService
     }
 
     /**
+     * 發送 Log
+     *
+     * @param  array $content
+     * @return void
+     */
+    protected function dispatch($content)
+    {
+        AsyncLogProcessor::dispatch($content);
+    }
+
+    /**
      * 取得 Log 自定義標籤
      */
     abstract protected function getTag();
@@ -140,45 +170,10 @@ abstract class AbstractLoggerService
     abstract protected function getLogData($source);
 
     /**
-     * 取得 Log 使用者 IP
+     * 取得 Merchant ID
      *
+     * @param  mixed  $source
      * @return string
      */
-    protected function getUserIp()
-    {
-        return request()->ip();
-    }
-
-    /**
-     * 取得 Log 使用者 Agent
-     *
-     * @return string
-     */
-    protected function getUserAgent()
-    {
-        return request()->userAgent();
-    }
-
-    /**
-     * 取得 Log 處理時間
-     *
-     * @return int
-     */
-    protected function getProcessDate()
-    {
-        return Carbon::now()->timestamp;
-    }
-
-    /**
-     * 記錄 Log
-     *
-     * @param  mixed $source
-     * @return boolean
-     */
-    public function log($source)
-    {
-        $content = $this->getContent($source);
-
-        return $this->driver->log($content);
-    }
+    abstract public function getMerchantId($source);
 }

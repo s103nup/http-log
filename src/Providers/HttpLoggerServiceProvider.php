@@ -3,18 +3,12 @@
 namespace CrowsFeet\HttpLogger\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use CrowsFeet\HttpLogger\Jobs\AsyncLogProcessor;
 use CrowsFeet\HttpLogger\Services\RequestLoggerService;
 use CrowsFeet\HttpLogger\Services\JsonResponseLoggerService;
 
 class HttpLoggerServiceProvider extends ServiceProvider
 {
-    /**
-     * Is service provider loading defered
-     *
-     * @var boolean
-     */
-    protected $defer = true;
-
     /**
      * Bootstrap the application services.
      *
@@ -34,14 +28,11 @@ class HttpLoggerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $driver = $this->getDriver();
-        $this->app->singleton(RequestLoggerService::class, function ($app) use ($driver) {
-            return new RequestLoggerService($driver);
-        });
+        $this->registerAsyncLogProcessor();
 
-        $this->app->singleton(JsonResponseLoggerService::class, function ($app) use ($driver) {
-            return new JsonResponseLoggerService($driver);
-        });
+        $this->registerRequestLogger();
+
+        $this->registerJsonResponseLogger();
     }
 
     /**
@@ -55,5 +46,42 @@ class HttpLoggerServiceProvider extends ServiceProvider
         $container = 'CrowsFeet\HttpLogger\Drivers\\' . $driverName;
 
         return app($container);
+    }
+
+    /**
+     * Register asynchronous processor
+     * 
+     * @return void
+     */
+    private function registerAsyncLogProcessor()
+    {
+        $driver = $this->getDriver();
+        $this->app->bindMethod(AsyncLogProcessor::class.'@handle', function ($job, $app) use ($driver) {
+            return $job->handle($driver);
+        });
+    }
+
+    /**
+     * Register request logger
+     *
+     * @return void
+     */
+    private function registerRequestLogger()
+    {
+        $this->app->singleton('requestLogger', function ($app) {
+            return new RequestLoggerService;
+        });
+    }
+
+    /**
+     * Register json response logger
+     *
+     * @return void
+     */
+    private function registerJsonResponseLogger()
+    {
+        $this->app->singleton('jsonResponseLogger', function ($app) {
+            return new JsonResponseLoggerService;
+        });
     }
 }
