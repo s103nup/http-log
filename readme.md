@@ -12,6 +12,8 @@ Generate a migration and create it
 ```shell
 php artisan queue:table
 
+php artisan queue:failed-table
+
 php artisan migrate
 ```
 
@@ -28,7 +30,7 @@ protected $middlewareGroups = [
     // ...
     'api' => [
         // ...
-        \CrowsFeet\HttpLogger\Middleware\JsonResponseLogger::class,
+        \CrowsFeet\HttpLogger\Middleware\JsonApiLogger::class,
     ],
 ];
 ```
