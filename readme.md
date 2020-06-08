@@ -37,6 +37,6 @@ protected $middlewareGroups = [
 
 Start processing jobs on the queue as a daemon
 ```shell
-php artisan queue:work
+nohup php artisan queue:work &
 ```
 
