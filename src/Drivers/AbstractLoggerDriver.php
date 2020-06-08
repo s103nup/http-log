@@ -7,19 +7,6 @@ use CrowsFeet\HttpLogger\Drivers\LoggerDriverInterface;
 abstract class AbstractLoggerDriver implements LoggerDriverInterface
 {
     /**
-     * 記錄 Log
-     *
-     * @param  mixed $content
-     * @return mixed
-     */
-    public function log($content)
-    {
-        $return = $this->handle($content);
-        
-        return $this->isSuccess($return);
-    }
-
-    /**
      * 取得驅動名稱
      *
      * @return string

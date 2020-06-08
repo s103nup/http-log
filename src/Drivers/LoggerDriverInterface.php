@@ -4,18 +4,10 @@ namespace CrowsFeet\HttpLogger\Drivers;
 interface LoggerDriverInterface
 {
     /**
-     * 記錄 Log 方式
+     * 記錄 Log
      *
-     * @param  mixed  $content
-     * @return mixed
+     * @param  mixed $content
+     * @return void
      */
-    public function handle($content);
-
-    /**
-     * 是否成功記錄 Log
-     *
-     * @param  boolean $return
-     * @return boolean
-     */
-    public function isSuccess($return);
+    public function log($content);
 }

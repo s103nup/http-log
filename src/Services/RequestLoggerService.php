@@ -7,22 +7,11 @@ use CrowsFeet\HttpLogger\Services\AbstractLoggerService;
 class RequestLoggerService extends AbstractLoggerService
 {
     /**
-     * 取得 Merchant ID
-     *
-     * @param  mixed  $source
-     * @return string
-     */
-    protected function getMerchantId($source)
-    {
-        return '500132';
-    }
-
-    /**
      * 取得 Log 自定義標籤
      */
     protected function getTag()
     {
-        return $this->getConfig('request_log_tag');
+        return $this->getConfig('tag.request');
     }
 
     /**
@@ -34,5 +23,16 @@ class RequestLoggerService extends AbstractLoggerService
     protected function getLogData($source)
     {
         return json_encode($source->all());
+    }
+
+    /**
+     * 取得 Merchant ID
+     *
+     * @param  mixed  $source
+     * @return string
+     */
+    public function getMerchantId($source)
+    {
+        return $source->input('MerchantID', '');
     }
 }

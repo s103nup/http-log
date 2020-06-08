@@ -30,7 +30,7 @@ return [
     |
     */
     'level_id' => env('HTTP_LOGGER_LEVEL_ID', 1),
-    'project_name' => env('HTTP_LOGGER_PROJECT_NAME', 'gw_demo'),
+    'project_name' => env('HTTP_LOGGER_PROJECT_NAME', 'http_log_demo'),
 
     /*
     |--------------------------------------------------------------------------
@@ -38,13 +38,17 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'request_log_tag' => env('HTTP_LOGGER_REQUEST_LOG_TAG', 'request_log'),
+    'request' => [
+        'log_tag' => env('HTTP_LOGGER_REQUEST_LOG_TAG', 'request'),
+    ],
 
     /*
     |--------------------------------------------------------------------------
-    | Response Log 設定
+    | Json Response Log 設定
     |--------------------------------------------------------------------------
     |
     */
-    'response_log_tag' => env('HTTP_LOGGER_RESPONSE_LOG_TAG', 'response_log'),
+    'json_response' => [
+        'log_tag' => env('HTTP_LOGGER_JSON_RESPONSE_LOG_TAG', 'json_response'),
+    ],
 ];
