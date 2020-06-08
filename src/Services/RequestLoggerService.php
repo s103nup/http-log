@@ -11,7 +11,7 @@ class RequestLoggerService extends AbstractLoggerService
      */
     protected function getTag()
     {
-        return $this->getConfig('tag.request');
+        return $this->getConfig('request.tag');
     }
 
     /**

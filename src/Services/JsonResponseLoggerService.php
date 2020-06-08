@@ -18,7 +18,7 @@ class JsonResponseLoggerService extends AbstractLoggerService
      */
     protected function getTag()
     {
-        return $this->getConfig('tag.json_response');
+        return $this->getConfig('json_response.tag');
     }
 
     /**

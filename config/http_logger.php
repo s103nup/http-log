@@ -39,7 +39,7 @@ return [
     |
     */
     'request' => [
-        'log_tag' => env('HTTP_LOGGER_REQUEST_LOG_TAG', 'request'),
+        'tag' => env('HTTP_LOGGER_REQUEST_LOG_TAG', 'request'),
     ],
 
     /*
@@ -49,6 +49,6 @@ return [
     |
     */
     'json_response' => [
-        'log_tag' => env('HTTP_LOGGER_JSON_RESPONSE_LOG_TAG', 'json_response'),
+        'tag' => env('HTTP_LOGGER_JSON_RESPONSE_LOG_TAG', 'json_response'),
     ],
 ];
