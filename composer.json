@@ -14,10 +14,8 @@
             "CrowsFeet\\HttpLogger\\": "src/"
         }
     },
-    "minimum-stability": "beta",
+    "minimum-stability": "stable",
     "require": {
-        "php": "^7.2.5",
-        "laravel": "^7.0",
         "nesbot/carbon": "^2.17",
         "guzzlehttp/guzzle": "^6.3"
     },
