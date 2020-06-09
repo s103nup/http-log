@@ -22,6 +22,11 @@ class JsonResponseLoggerService extends AbstractLoggerService
      */
     protected function getLogData($source)
     {
-        return $source->content();
+        $data = [
+            'header' => $source->headers->all(),
+            'body' => $source->content()
+        ];
+
+        return $data;
     }
 }
