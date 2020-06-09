@@ -8,15 +8,6 @@ Require this package with composer.
 composer require crows-feet/laravel-http-logger
 ```
 
-Generate a migration and create it
-```shell
-php artisan queue:table
-
-php artisan queue:failed-table
-
-php artisan migrate
-```
-
 ## Configuration
 To copy the package config to Laravel with the following `publish` command
 ```shell
@@ -35,8 +26,40 @@ protected $middlewareGroups = [
 ];
 ```
 
-Start processing jobs on the queue as a daemon
-```shell
-nohup php artisan queue:work &
+Log request
+```php
+public function demo(Request $request)
+{
+    RequestLogger::log($request);
+}
 ```
 
+Log request with extra data
+```php
+public function demo(Request $request)
+{
+    $extra = [
+        'RqID' => 'id',
+    ]
+    RequestLogger::log($request, $extra);
+}
+```
+
+Log JSON response directly
+```php
+public function demo(JsonResponse $response)
+{
+    JsonResponseLogger::log($response);
+}
+```
+
+Log JSON response with extra data
+```php
+public function demo(JsonResponse $response)
+{
+    $extra = [
+        'RqID' => 'id',
+    ]
+    JsonResponseLogger::log($response, $extra);
+}
+```
