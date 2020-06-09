@@ -31,6 +31,7 @@ return [
     */
     'level_id' => env('HTTP_LOGGER_LEVEL_ID', 1),
     'project_name' => env('HTTP_LOGGER_PROJECT_NAME', 'http_log_demo'),
+    'request_id_name' => env('HTTP_REQUEST_ID_NAME', 'rqid'),
 
     /*
     |--------------------------------------------------------------------------

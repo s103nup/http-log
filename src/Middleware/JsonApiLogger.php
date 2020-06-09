@@ -3,51 +3,14 @@ namespace CrowsFeet\HttpLogger\Middleware;
 
 	
 use Closure;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
+use CrowsFeet\HttpLogger\Traits\RequestId;
+use CrowsFeet\HttpLogger\Traits\MerchantId;
+use CrowsFeet\HttpLogger\Facades\RequestLogger;
+use CrowsFeet\HttpLogger\Facades\JsonResponseLogger;
 
 class JsonApiLogger
 {
-    /**
-     * Request logger
-     *
-     * @var AbstractLoggerService
-     */
-    protected $requestLogger;
-
-    /**
-     * Request logger
-     *
-     * @var AbstractLoggerService
-     */
-    protected $responseLogger;
-
-    public function __construct()
-    {
-        $this->requestLogger = $this->getRequestLogger();
-        $this->responseLogger = $this->getResponseLogger();
-    }
-
-    /**
-     * Get request logger
-     *
-     * @return string
-     */
-    private function getRequestLogger()
-    {
-        return 'CrowsFeet\HttpLogger\Facades\RequestLogger';
-    }
-
-    /**
-     * Get response logger
-     *
-     * @return string
-     */
-    private function getResponseLogger()
-    {
-        return 'CrowsFeet\HttpLogger\Facades\JsonResponseLogger';
-    }
-
+    use RequestId, MerchantId;
     /**
      * Handle an incoming request.
      *
@@ -58,10 +21,10 @@ class JsonApiLogger
     public function handle($request, Closure $next)
     {
         $extra = $this->getExtra($request);
-        $this->requestLogger::log($request, $extra);
+        RequestLogger::log($request, $extra);
 
         $response = $next($request);
-        $this->responseLogger::log($response, $extra);
+        JsonResponseLogger::log($response, $extra);
 
         return $response;
     }
@@ -75,39 +38,8 @@ class JsonApiLogger
     protected function getExtra($request)
     {
         return  [
-            'RqID' => $this->getRqid($request),
+            'RqID' => $this->getRequestId($request),
             'MID' => $this->getMerchantId($request),
         ];
-    }
-
-    /**
-     * 取得 Rqid
-     *
-     * @return string
-     */
-    private function getRqid($request)
-    {
-        return $request->input('RqId', $this->generateRqid());
-    }
-
-    /**
-     * 產生 Rqid
-     *
-     * @return void
-     */
-    private function generateRqid()
-    {
-        return (string) Str::uuid();
-    }
-
-    /**
-     * 取得 Merchant ID
-     *
-     * @param  mixed  $source
-     * @return string
-     */
-    private function getMerchantId($source)
-    {
-        return $source->input('MerchantID', '9999999');
     }
 }
