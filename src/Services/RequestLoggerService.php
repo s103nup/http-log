@@ -22,6 +22,11 @@ class RequestLoggerService extends AbstractLoggerService
      */
     protected function getLogData($source)
     {
-        return json_encode($source->all());
+        $data = [
+            'header' => $source->headers->all(),
+            'body' => $source->all()
+        ];
+
+        return json_encode($data);
     }
 }
