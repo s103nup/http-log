@@ -12,14 +12,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | 驅動設定
+    | 處理器設定
     |--------------------------------------------------------------------------
     |
     */
-    'drivers' => [
+    'processor' => [
         'http' => [
             'token' => env('HTTP_LOGGER_TOKEN', 'token'),
-            'api' => env('HTTP_LOGGER_API', 'https://example.com.tw/api/post'),
+            'url' => env('HTTP_LOGGER_API', 'https://example.com.tw/api/post'),
         ]
     ],
 

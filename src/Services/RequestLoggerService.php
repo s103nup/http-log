@@ -24,15 +24,4 @@ class RequestLoggerService extends AbstractLoggerService
     {
         return json_encode($source->all());
     }
-
-    /**
-     * 取得 Merchant ID
-     *
-     * @param  mixed  $source
-     * @return string
-     */
-    public function getMerchantId($source)
-    {
-        return $source->input('MerchantID', '');
-    }
 }

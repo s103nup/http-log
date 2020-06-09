@@ -28,37 +28,9 @@ class HttpLoggerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->registerAsyncLogProcessor();
-
         $this->registerRequestLogger();
 
         $this->registerJsonResponseLogger();
-    }
-
-    /**
-     * Get driver
-     *
-     * @return mixed
-     */
-    private function getDriver()
-    {
-        $driverName = ucfirst(config('http_logger.default', 'Http'));
-        $container = 'CrowsFeet\HttpLogger\Drivers\\' . $driverName;
-
-        return app($container);
-    }
-
-    /**
-     * Register asynchronous processor
-     * 
-     * @return void
-     */
-    private function registerAsyncLogProcessor()
-    {
-        $driver = $this->getDriver();
-        $this->app->bindMethod(AsyncLogProcessor::class.'@handle', function ($job, $app) use ($driver) {
-            return $job->handle($driver);
-        });
     }
 
     /**

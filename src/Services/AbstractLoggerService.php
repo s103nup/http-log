@@ -2,86 +2,56 @@
 namespace CrowsFeet\HttpLogger\Services;
 
 use Carbon\Carbon;
-use Illuminate\Support\Str;
-use CrowsFeet\HttpLogger\Jobs\AsyncLogProcessor;
+use Illuminate\Support\Facades\Log;
 
 
 abstract class AbstractLoggerService
 {
     /**
-     * Request ID
-     *
-     * @var string
-     */
-    protected $rqId = '';
-
-    /**
      * 記錄 Log
      *
-     * @param  mixed   $source
-     * @param  string  $rqId
+     * @param  mixed   $request
+     * @param  array   $extra
      * @return boolean
      */
-    public function log($source, $rqId = '')
-    {
-        $this->setRqid($rqId);
-        $this->dispatch($this->getContent($source));
+    public function log($request, $extra = [])
+    {	
+        $content = $this->getContent($request, $extra);
+        $log = $this->toLog($content);
+        Log::channel('http')->info($log);
     }
 
-    /**
-     * 產生 Rqid
-     *
-     * @return void
-     */
-    public function generateRqid()
-    {
-        return (string) Str::uuid();
-    }
-
-    /**
-     * 取得 Rqid
-     *
-     * @return string
-     */
-    public function getRqid()
-    {
-        return $this->rqId;
-    }
-    
     /**
      * 取得 Log 內容
      *
-     * @param  mixed  $source
-     * @return array
+     * @param  mixed  $request
+     * @param  array  $extra
+     * @return string
      */
-    protected function getContent($source)
+    protected function getContent($request, $extra = [])
     {
-        return [
-            'MID' => $this->getMerchantId($source),
-            'RqID' => $this->getRqid(),
+        $main = [
             'LevelID' => $this->getLevelId(),
             'Type' => $this->getProjectName(),
             'Tag' => $this->getTag(),
-            'LogData' => $this->getLogData($source),
+            'LogData' => $this->getLogData($request),
             'UserIP' => $this->getUserIp(),
             'UserAgent' => $this->getUserAgent(),
             'ProcessDate' => $this->getProcessDate(),
         ];
+
+        return array_merge($main, $extra);
     }
 
     /**
-     * 設定 Rqid
+     * 轉為 Log
      *
-     * @param  string $rqId
-     * @return void
+     * @param  array  $content
+     * @return string
      */
-    protected function setRqid($rqId)
+    protected function toLog($content)
     {
-        if ($rqId === '') {
-            $rqId = $this->generateRqid();
-        }
-
-        $this->rqId = $rqId;
+        return json_encode($content);
     }
 
     /**
@@ -146,17 +116,6 @@ abstract class AbstractLoggerService
     }
 
     /**
-     * 發送 Log
-     *
-     * @param  array $content
-     * @return void
-     */
-    protected function dispatch($content)
-    {
-        AsyncLogProcessor::dispatch($content);
-    }
-
-    /**
      * 取得 Log 自定義標籤
      */
     abstract protected function getTag();
@@ -168,12 +127,4 @@ abstract class AbstractLoggerService
      * @return string
      */
     abstract protected function getLogData($source);
-
-    /**
-     * 取得 Merchant ID
-     *
-     * @param  mixed  $source
-     * @return string
-     */
-    abstract public function getMerchantId($source);
 }

@@ -3,6 +3,7 @@ namespace CrowsFeet\HttpLogger\Middleware;
 
 	
 use Closure;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 
 class JsonApiLogger
@@ -56,41 +57,57 @@ class JsonApiLogger
      */
     public function handle($request, Closure $next)
     {
-        $this->logRequest($request);
+        $extra = $this->getExtra($request);
+        $this->requestLogger::log($request, $extra);
 
         $response = $next($request);
-
-        $this->logResponse($request, $response);
+        $this->responseLogger::log($response, $extra);
 
         return $response;
     }
 
     /**
-     * 記錄 Request
+     * 取得擴充資料
      *
      * @param \Illuminate\Http\Request  $request
-     * @return void
+     * @return array
      */
-    private function logRequest($request)
+    protected function getExtra($request)
     {
-        $this->requestLogger::log($request);
-        $rqid = $this->requestLogger::getRqid();
-        Log::info('Request RqId: ' . $rqid);
+        return  [
+            'RqID' => $this->getRqid($request),
+            'MID' => $this->getMerchantId($request),
+        ];
     }
 
     /**
-     * 記錄回應
+     * 取得 Rqid
      *
-     * @param \Illuminate\Http\Request  $request
-     * @param mixed $response
+     * @return string
+     */
+    private function getRqid($request)
+    {
+        return $request->input('RqId', $this->generateRqid());
+    }
+
+    /**
+     * 產生 Rqid
+     *
      * @return void
      */
-    private function logResponse($request, $response)
+    private function generateRqid()
     {
-        $merchantId = $this->requestLogger::getMerchantId($request);
-        $this->responseLogger::setMerchantId($merchantId);
-        
-        $rqid = $this->requestLogger::getRqid();
-        $this->responseLogger::log($response, $rqid);
+        return (string) Str::uuid();
+    }
+
+    /**
+     * 取得 Merchant ID
+     *
+     * @param  mixed  $source
+     * @return string
+     */
+    private function getMerchantId($source)
+    {
+        return $source->input('MerchantID', '9999999');
     }
 }
