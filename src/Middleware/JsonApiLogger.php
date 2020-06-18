@@ -2,33 +2,10 @@
 namespace CrowsFeet\HttpLogger\Middleware;
 
 	
-use Closure;
-use CrowsFeet\HttpLogger\Traits\RequestId;
-use CrowsFeet\HttpLogger\Traits\MerchantId;
-use CrowsFeet\HttpLogger\Facades\RequestLogger;
-use CrowsFeet\HttpLogger\Facades\JsonResponseLogger;
+use CrowsFeet\HttpLogger\Middleware\AbstractRequestAndResponseLogger;
 
-class JsonApiLogger
+class JsonApiLogger extends AbstractRequestAndResponseLogger
 {
-    use RequestId, MerchantId;
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
-     */
-    public function handle($request, Closure $next)
-    {
-        $extra = $this->getExtra($request);
-        RequestLogger::log($request, $extra);
-
-        $response = $next($request);
-        JsonResponseLogger::log($response, $extra);
-
-        return $response;
-    }
-
     /**
      * 取得擴充資料
      *
@@ -37,9 +14,26 @@ class JsonApiLogger
      */
     protected function getExtra($request)
     {
-        return  [
-            'RqID' => $this->getRequestId($request),
-            'MID' => $this->getMerchantId($request),
-        ];
+        return  [];
+    }
+
+    /**
+     * 取得 Request Logger
+     *
+     * @return array
+     */
+    protected function getRequestLogger()
+    {
+        return 'CrowsFeet\HttpLogger\Facades\RequestLogger';
+    }
+
+    /**
+     * 取得 Response Logger
+     *
+     * @return array
+     */
+    protected function getResponseLogger()
+    {
+        return 'CrowsFeet\HttpLogger\Facades\JsonResponseLogger';
     }
 }

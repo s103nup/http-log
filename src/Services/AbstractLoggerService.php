@@ -1,130 +1,52 @@
 <?php
 namespace CrowsFeet\HttpLogger\Services;
 
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
-
 
 abstract class AbstractLoggerService
 {
     /**
+     * 取得 Log Channel
+     *
+     * @return string
+     */
+    protected function getChannel()
+    {
+        return config('logging.default');
+    }
+
+    /**
      * 記錄 Log
      *
-     * @param  mixed   $request
+     * @param  mixed   $source
      * @param  array   $extra
      * @return boolean
      */
-    public function log($request, $extra = [])
+    public function log($source, $extra = [])
     {	
-        $content = $this->getContent($request, $extra);
-        $log = $this->toLog($content);
-        Log::channel('http')->info($log);
+        $content = $this->getContent($source, $extra);
+        $log = $this->formate($content);
+
+        Log::channel($this->getChannel())->info($log);
     }
 
     /**
-     * 取得 Log 內容
-     *
-     * @param  mixed  $request
-     * @param  array  $extra
-     * @return string
-     */
-    protected function getContent($request, $extra = [])
-    {
-        $main = [
-            'LevelID' => $this->getLevelId(),
-            'Type' => $this->getProjectName(),
-            'Tag' => $this->getTag(),
-            'LogData' => $this->getLogData($request),
-            'UserIP' => $this->getUserIp(),
-            'UserAgent' => $this->getUserAgent(),
-            'ProcessDate' => $this->getProcessDate(),
-        ];
-
-        return array_merge($main, $extra);
-    }
-
-    /**
-     * 轉為 Log
+     * Log 格式轉換
      *
      * @param  array  $content
-     * @return string
+     * @return mixed
      */
-    protected function toLog($content)
+    protected function formate($content)
     {
         return json_encode($content);
     }
 
     /**
-     * 取得 Log 使用者 IP
+     * 取得 Log 內容
      *
-     * @return string
+     * @param  mixed  $source
+     * @param  array  $extra
+     * @return array
      */
-    protected function getUserIp()
-    {
-        return request()->ip();
-    }
-
-    /**
-     * 取得 Log 使用者 Agent
-     *
-     * @return string
-     */
-    protected function getUserAgent()
-    {
-        return request()->userAgent();
-    }
-
-    /**
-     * 取得 Log 處理時間
-     *
-     * @return int
-     */
-    protected function getProcessDate()
-    {
-        return Carbon::now()->timestamp;
-    }
-
-    /**
-     * 取得設定
-     *
-     * @param  string $name
-     * @return mixed
-     */
-    protected function getConfig($name)
-    {
-        return config('http_logger.' . $name);
-    }
-
-    /**
-     * 取得 Log 等級 ID
-     *
-     * @return string
-     */
-    protected function getLevelId()
-    {
-        return $this->getConfig('level_id');
-    }
-
-    /**
-     * 取得 Log 專案名稱
-     *
-     * @return string
-     */
-    protected function getProjectName()
-    {
-        return $this->getConfig('project_name');
-    }
-
-    /**
-     * 取得 Log 自定義標籤
-     */
-    abstract protected function getTag();
-
-    /**
-     * 取得 LogData
-     *
-     * @param  mixed $source
-     * @return string
-     */
-    abstract protected function getLogData($source);
+    abstract protected function getContent($source, $extra = []);
 }

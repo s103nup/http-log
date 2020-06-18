@@ -1,32 +1,34 @@
 <?php
 namespace CrowsFeet\HttpLogger\Services;
 
+use CrowsFeet\HttpLogger\Traits\Request;
+use CrowsFeet\HttpLogger\Traits\LogContent;
+use CrowsFeet\HttpLogger\Traits\JsonResponse;
 use CrowsFeet\HttpLogger\Services\AbstractLoggerService;
 
 
 class JsonResponseLoggerService extends AbstractLoggerService
 {
-    /**
-     * 取得 Log 自定義標籤
-     */
-    protected function getTag()
-    {
-        return $this->getConfig('json_response.tag');
-    }
+    use JsonResponse, Request, LogContent;
 
     /**
-     * 取得 LogData
+     * 取得 Log 內容
      *
-     * @param  mixed $source
+     * @param  mixed  $source`
+     * @param  array  $extra
      * @return string
      */
-    protected function getLogData($source)
+    protected function getContent($source, $extra = [])
     {
-        $data = [
-            'header' => $source->headers->all(),
-            'body' => $source->content()
+        $main = [
+            'Type' => 'Response',
+            'Header' => $this->getJsonResponseHeaders($source),
+            'Body' => $this->getJsonResponseBody($source),
+            'UserIp' => $this->getUserIp(),
+            'UserAgent' => $this->getUserAgent(),
+            'ProcessDate' => $this->getProcessDate(),
         ];
 
-        return $data;
+        return array_merge($main, $extra);
     }
 }

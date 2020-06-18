@@ -3,7 +3,6 @@
 namespace CrowsFeet\HttpLogger\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use CrowsFeet\HttpLogger\Jobs\AsyncLogProcessor;
 use CrowsFeet\HttpLogger\Services\RequestLoggerService;
 use CrowsFeet\HttpLogger\Services\JsonResponseLoggerService;
 
@@ -28,30 +27,20 @@ class HttpLoggerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->registerRequestLogger();
-
-        $this->registerJsonResponseLogger();
+        $this->registerJsonApiLogger();
     }
 
     /**
-     * Register request logger
+     * Register Json api logger
      *
      * @return void
      */
-    private function registerRequestLogger()
+    private function registerJsonApiLogger()
     {
         $this->app->singleton('requestLogger', function ($app) {
             return new RequestLoggerService;
         });
-    }
 
-    /**
-     * Register json response logger
-     *
-     * @return void
-     */
-    private function registerJsonResponseLogger()
-    {
         $this->app->singleton('jsonResponseLogger', function ($app) {
             return new JsonResponseLoggerService;
         });
