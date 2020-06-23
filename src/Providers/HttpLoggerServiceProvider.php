@@ -46,8 +46,8 @@ class HttpLoggerServiceProvider extends ServiceProvider
                 return new RequestLoggerService;
             }
         );
-        // todo: update singleton to bind
-        $this->app->singleton(
+
+        $this->app->bind(
             'jsonResponseLogger',
             function ($app) {
                 return new JsonResponseLoggerService;
