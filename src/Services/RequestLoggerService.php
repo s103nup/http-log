@@ -12,7 +12,6 @@ class RequestLoggerService extends AbstractLoggerService
     /**
      * 取得 Log 內容
      *
-     * @todo   remove process date
      * @param  mixed $source
      * @param  array $extra
      * @return string

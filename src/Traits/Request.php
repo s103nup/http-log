@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 trait Request
 {
     /**
-     * 取得 Request ID
+     * Get Request ID
      *
      * @param  \Illuminate\Http\Request $request
      * @param  string                   $name
@@ -36,7 +36,7 @@ trait Request
     }
 
     /**
-     * 產生 Request ID
+     * Generate Request ID
      *
      * @return string
      */
@@ -46,7 +46,7 @@ trait Request
     }
 
     /**
-     * 取得 User IP
+     * Get User IP
      *
      * @return string
      */
@@ -56,7 +56,7 @@ trait Request
     }
 
     /**
-     * 取得 User Agent
+     * Get User Agent
      *
      * @return string
      */
@@ -66,7 +66,7 @@ trait Request
     }
 
     /**
-     * 取得 Reqeust Header
+     * Get Reqeust Header
      *
      * @return string
      */
@@ -76,7 +76,7 @@ trait Request
     }
 
     /**
-     * 取得 Request Body
+     * Get Request Body
      *
      * @return string
      */
