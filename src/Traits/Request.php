@@ -8,8 +8,9 @@ trait Request
     /**
      * 取得 Request ID
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string $name
+     * @todo   Add get request id name function
+     * @param  \Illuminate\Http\Request $request
+     * @param  string                   $name
      * @return string
      */
     protected function getRequestId($request, $name = '')

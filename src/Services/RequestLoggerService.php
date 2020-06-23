@@ -5,7 +5,6 @@ use CrowsFeet\HttpLogger\Traits\Request;
 use CrowsFeet\HttpLogger\Traits\LogContent;
 use CrowsFeet\HttpLogger\Services\AbstractLoggerService;
 
-
 class RequestLoggerService extends AbstractLoggerService
 {
     use Request, LogContent;
@@ -13,8 +12,9 @@ class RequestLoggerService extends AbstractLoggerService
     /**
      * 取得 Log 內容
      *
-     * @param  mixed  $source
-     * @param  array  $extra
+     * @todo   remove process date
+     * @param  mixed $source
+     * @param  array $extra
      * @return string
      */
     protected function getContent($source, $extra = [])
