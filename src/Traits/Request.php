@@ -84,4 +84,14 @@ trait Request
     {
         return request()->all();
     }
+
+    /**
+     * Get request full URL
+     *
+     * @return string
+     */
+    protected function getRequestFullUrl()
+    {
+        return request()->fullUrl();
+    }
 }
