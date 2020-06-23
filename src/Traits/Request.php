@@ -8,17 +8,31 @@ trait Request
     /**
      * 取得 Request ID
      *
-     * @todo   Add get request id name function
      * @param  \Illuminate\Http\Request $request
      * @param  string                   $name
      * @return string
      */
     protected function getRequestId($request, $name = '')
     {
+        return $request->input(
+            $this->getRequestIdName($name),
+            $this->generateRequestId()
+        );
+    }
+
+    /**
+     * Get request id name
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function getRequestIdName($name)
+    {
         if ($name === '') {
             $name = config('http_logger.request_id_name');
         }
-        return $request->input($name, $this->generateRequestId());
+
+        return $name;
     }
 
     /**
