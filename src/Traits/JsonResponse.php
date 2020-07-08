@@ -1,7 +1,6 @@
 <?php
 namespace CrowsFeet\HttpLogger\Traits;
 
-
 trait JsonResponse
 {
     /**

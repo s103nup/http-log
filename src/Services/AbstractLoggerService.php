@@ -18,12 +18,12 @@ abstract class AbstractLoggerService
     /**
      * 記錄 Log
      *
-     * @param  mixed   $source
-     * @param  array   $extra
+     * @param  mixed $source
+     * @param  array $extra
      * @return boolean
      */
     public function log($source, $extra = [])
-    {	
+    {
         $content = $this->getContent($source, $extra);
         $log = $this->formate($content);
 
@@ -33,7 +33,7 @@ abstract class AbstractLoggerService
     /**
      * Log 格式轉換
      *
-     * @param  array  $content
+     * @param  array $content
      * @return mixed
      */
     protected function formate($content)
@@ -44,8 +44,8 @@ abstract class AbstractLoggerService
     /**
      * 取得 Log 內容
      *
-     * @param  mixed  $source
-     * @param  array  $extra
+     * @param  mixed $source
+     * @param  array $extra
      * @return array
      */
     abstract protected function getContent($source, $extra = []);

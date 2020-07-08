@@ -6,22 +6,44 @@ use Illuminate\Support\Str;
 trait Request
 {
     /**
-     * 取得 Request ID
+     * Get Request ID
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string $name
+     * @param  \Illuminate\Http\Request $request
+     * @param  string                   $name
      * @return string
      */
     protected function getRequestId($request, $name = '')
     {
-        if ($name === '') {
-            $name = config('http_logger.request_id_name');
+        $headerRequestId = $this->getRequestIdFromHeader($request, $name);
+        if ($headerRequestId !== '') {
+            return $headerRequestId;
         }
-        return $request->input($name, $this->generateRequestId());
+        
+        $bodyRequestId = $this->getRequestIdFromBody($request, $name);
+        if ($bodyRequestId !== '') {
+            return $bodyRequestId;
+        }
+
+        return $this->generateRequestId();
     }
 
     /**
-     * 產生 Request ID
+     * Get request id name
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function getRequestIdName($name)
+    {
+        if ($name === '') {
+            $name = config('http_logger.request_id_name');
+        }
+
+        return $name;
+    }
+
+    /**
+     * Generate Request ID
      *
      * @return string
      */
@@ -31,7 +53,7 @@ trait Request
     }
 
     /**
-     * 取得 User IP
+     * Get User IP
      *
      * @return string
      */
@@ -41,7 +63,7 @@ trait Request
     }
 
     /**
-     * 取得 User Agent
+     * Get User Agent
      *
      * @return string
      */
@@ -51,7 +73,7 @@ trait Request
     }
 
     /**
-     * 取得 Reqeust Header
+     * Get Reqeust Header
      *
      * @return string
      */
@@ -61,12 +83,53 @@ trait Request
     }
 
     /**
-     * 取得 Request Body
+     * Get Request Body
      *
      * @return string
      */
     protected function getRequestBody()
     {
         return request()->all();
+    }
+
+    /**
+     * Get request full URL
+     *
+     * @return string
+     */
+    protected function getRequestFullUrl()
+    {
+        return request()->fullUrl();
+    }
+
+    /**
+     * Get request id from body
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  string                   $name
+     * @return string
+     */
+    protected function getRequestIdFromBody($request, $name)
+    {
+        return $request->input(
+            $this->getRequestIdName($name),
+            ''
+        );
+    }
+
+    /**
+     * Get request id from header
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  string                   $name
+     * @return string
+     */
+    protected function getRequestIdFromHeader($request, $name)
+    {
+        if (isset($request->header()[$name])) {
+            return $request->header()[$name][0];
+        } else {
+            return '';
+        }
     }
 }

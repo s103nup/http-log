@@ -15,9 +15,12 @@ class HttpLoggerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([
+        $this->publishes(
+            [
             __DIR__ . '/../../config/http_logger.php' => config_path('http_logger.php'),
-        ], 'http-logger-config');
+            ],
+            'http-logger-config'
+        );
     }
 
     /**
@@ -37,12 +40,18 @@ class HttpLoggerServiceProvider extends ServiceProvider
      */
     private function registerJsonApiLogger()
     {
-        $this->app->singleton('requestLogger', function ($app) {
-            return new RequestLoggerService;
-        });
+        $this->app->singleton(
+            'requestLogger',
+            function ($app) {
+                return new RequestLoggerService;
+            }
+        );
 
-        $this->app->singleton('jsonResponseLogger', function ($app) {
-            return new JsonResponseLoggerService;
-        });
+        $this->app->bind(
+            'jsonResponseLogger',
+            function ($app) {
+                return new JsonResponseLoggerService;
+            }
+        );
     }
 }

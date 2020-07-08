@@ -1,7 +1,6 @@
 <?php
 namespace CrowsFeet\HttpLogger\Middleware;
 
-	
 use CrowsFeet\HttpLogger\Middleware\AbstractRequestAndResponseLogger;
 
 class JsonApiLogger extends AbstractRequestAndResponseLogger
@@ -9,7 +8,7 @@ class JsonApiLogger extends AbstractRequestAndResponseLogger
     /**
      * 取得擴充資料
      *
-     * @param \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return array
      */
     protected function getExtra($request)
