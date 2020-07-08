@@ -14,10 +14,17 @@ trait Request
      */
     protected function getRequestId($request, $name = '')
     {
-        return $request->input(
-            $this->getRequestIdName($name),
-            $this->generateRequestId()
-        );
+        $headerRequestId = $this->getRequestIdFromHeader($request, $name);
+        if ($headerRequestId !== '') {
+            return $headerRequestId;
+        }
+        
+        $bodyRequestId = $this->getRequestIdFromBody($request, $name);
+        if ($bodyRequestId !== '') {
+            return $bodyRequestId;
+        }
+
+        return $this->generateRequestId();
     }
 
     /**
@@ -93,5 +100,36 @@ trait Request
     protected function getRequestFullUrl()
     {
         return request()->fullUrl();
+    }
+
+    /**
+     * Get request id from body
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  string                   $name
+     * @return string
+     */
+    protected function getRequestIdFromBody($request, $name)
+    {
+        return $request->input(
+            $this->getRequestIdName($name),
+            ''
+        );
+    }
+
+    /**
+     * Get request id from header
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  string                   $name
+     * @return string
+     */
+    protected function getRequestIdFromHeader($request, $name)
+    {
+        if (isset($request->header()[$name])) {
+            return $request->header()[$name][0];
+        } else {
+            return '';
+        }
     }
 }
