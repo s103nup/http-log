@@ -15,10 +15,6 @@
         }
     },
     "minimum-stability": "stable",
-    "require": {
-        "nesbot/carbon": "^2.17",
-        "guzzlehttp/guzzle": "^6.3"
-    },
     "extra": {
         "laravel": {
             "providers": [

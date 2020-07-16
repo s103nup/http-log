@@ -25,7 +25,7 @@ abstract class AbstractLoggerService
     public function log($source, $extra = [])
     {
         $content = $this->getContent($source, $extra);
-        $log = $this->formate($content);
+        $log = $this->format($content);
 
         Log::channel($this->getChannel())->info($log);
     }
@@ -36,7 +36,7 @@ abstract class AbstractLoggerService
      * @param  array $content
      * @return mixed
      */
-    protected function formate($content)
+    protected function format($content)
     {
         return json_encode($content);
     }

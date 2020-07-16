@@ -40,7 +40,7 @@ public function demo(Request $request)
 {
     $extra = [
         'RqID' => 'id',
-    ]
+    ];
     RequestLogger::log($request, $extra);
 }
 ```
@@ -59,7 +59,7 @@ public function demo(JsonResponse $response)
 {
     $extra = [
         'RqID' => 'id',
-    ]
+    ];
     JsonResponseLogger::log($response, $extra);
 }
 ```
