@@ -126,10 +126,6 @@ trait Request
      */
     protected function getRequestIdFromHeader($request, $name)
     {
-        if (isset($request->header()[$name])) {
-            return $request->header()[$name][0];
-        } else {
-            return '';
-        }
+        return $request->header($name, '');
     }
 }
